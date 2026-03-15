@@ -1,33 +1,26 @@
-export default async function handler(req, res) {
-  // Allow all origins (frontend, localhost, GitHub Pages)
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+import fetch from "node-fetch";
 
-  // Handle browser preflight request
-  if (req.method === "OPTIONS") {
-    res.status(200).end();
-    return;
+export default async function handler(req, res) {
+  const { path } = req.query;
+
+  if (!path) {
+    return res.status(400).json({ error: "Missing path parameter" });
   }
 
+  const targetUrl = `http://149.118.151.140:8080/api/air-quality/${path}`;
+
   try {
-    const { path = [] } = req.query;
-    const pathString = Array.isArray(path) ? path.join("/") : path;
+    const response = await fetch(targetUrl);
+    const data = await response.json();
 
-    const queryString = req.url.includes("?")
-      ? req.url.slice(req.url.indexOf("?"))
-      : "";
+    // Allow cross-origin requests
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET,OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-    const backendUrl =
-      "http://149.118.151.140:8080/api/air-quality/" +
-      pathString +
-      queryString;
-
-    const response = await fetch(backendUrl);
-    const data = await response.text();
-
-    res.status(response.status).send(data);
+    res.status(200).json(data);
   } catch (error) {
+    console.error("Proxy error:", error);
     res.status(500).json({ error: "Proxy failed" });
   }
 }
