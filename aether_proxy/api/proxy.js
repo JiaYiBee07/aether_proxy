@@ -8,13 +8,12 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Missing path parameter" });
   }
 
-  const targetUrl = http://149.118.151.140:8080/api/air-quality/real-time/air-quality?${path};
+  const targetUrl = `http://149.118.151.140:8080/api/air-quality/real-time/air-quality?${path}`;
 
   try {
     const response = await fetch(targetUrl);
     const data = await response.json();
 
-    // Allow cross-origin requests
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET,OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
