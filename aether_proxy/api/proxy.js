@@ -8,7 +8,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Missing path parameter" });
   }
 
-  const targetUrl = `http://149.118.151.140:8080/api/air-quality${path}`;
+  const targetUrl = http://149.118.151.140:8080/api/air-quality/${path};
 
   try {
     const response = await fetch(targetUrl);
